@@ -4,8 +4,8 @@ import bpy
 
 # Leftなら0、Rなら1を返すよ。えらい。
 def l_r_detect(name):
-	if 'L' in name and 'R' not in name[-1] and 'right' not in name.lower() or 'left' in name.lower():
-		return 0
+    if 'L' in name and 'R' not in name[-1] and 'right' not in name.lower() or 'left' in name.lower():
+        return 0
     elif 'R' in name and 'L' not in name[-1] and 'left' not in name.lower() or 'right' in name.lower():
         return 1
     else:
@@ -14,8 +14,8 @@ def l_r_detect(name):
 
 # 素体側ボーンの内、表記ゆれが多い奴だけを抽出して配列に格納するよ。例外に日々怯えているよ。
 def init_bone_list():
-	#リスト初期化
-	boneNameList =  [[] for i in range(2)]
+    #リスト初期化
+    boneNameList =  [[] for i in range(2)]
     # シーン中の全てのオブジェクト検索
     for ob in bpy.context.scene.objects:
         # オブジェクト内からアーマーチュアを検索
@@ -26,11 +26,11 @@ def init_bone_list():
                 for bone in ob.data.bones:
                     # Bone名の内、関係のありそうなもののみ取得。なんかいい感じに短くしたい
                     if 'shoulder' in bone.name.lower():
-                   		boneNameList[l_r_detect(bone.name)].append(bone.name)
+                        boneNameList[l_r_detect(bone.name)].append(bone.name)
                     elif 'arm' in bone.name.lower():
                         # upってパターンとupperのパターンを包括。例外ありそう
                         if 'up' in bone.name.lower():
-                     		boneNameList[l_r_detect(bone.name)].append(bone.name)
+                            boneNameList[l_r_detect(bone.name)].append(bone.name)
                         elif 'lower' in bone.name.lower():
                             boneNameList[l_r_detect(bone.name)].append(bone.name)
                         elif 'fore' in bone.name.lower():
@@ -38,7 +38,7 @@ def init_bone_list():
                         else:
                             boneNameList[l_r_detect(bone.name)].append(bone.name)                             
                     elif 'elbow' in bone.name.lower():
-                    	boneNameList[l_r_detect(bone.name)].append(bone.name)
+                        boneNameList[l_r_detect(bone.name)].append(bone.name)
                     elif 'hand' in bone.name.lower() and 'thumb' not in bone.name.lower() \
                         and 'index' not in bone.name.lower() \
                         and 'middle' not in bone.name.lower() \
@@ -47,13 +47,13 @@ def init_bone_list():
                         and 'support' not in bone.name.lower() \
                         and 'ribon' not in bone.name.lower() \
                         and 'ribbon' not in bone.name.lower():
-                    	boneNameList[l_r_detect(bone.name)].append(bone.name)
+                        boneNameList[l_r_detect(bone.name)].append(bone.name)
                     elif 'wrist' in bone.name.lower():
                         boneNameList[l_r_detect(bone.name)].append(bone.name)
                     elif 'leg' in bone.name.lower():
                         # upってパターンとupperのパターンを包括。例外ありそう
                         if 'up' in bone.name.lower():
-                    		boneNameList[l_r_detect(bone.name)].append(bone.name)
+                            boneNameList[l_r_detect(bone.name)].append(bone.name)
                         elif 'lower' in bone.name.lower():
                             boneNameList[l_r_detect(bone.name)].append(bone.name)
                         # Leg単体のパターンもあるらしい。もうわからん
@@ -62,12 +62,12 @@ def init_bone_list():
                             # Leg単体の時はLeg = LowerLegになるので、入れ替えておかないと辛いことになる
                             boneNameList[l_r_detect(bone.name)][-1], boneNameList[l_r_detect(bone.name)][-2] = boneNameList[l_r_detect(bone.name)][-2], boneNameList[l_r_detect(bone.name)][-1]
                     elif 'knee' in bone.name.lower():
-                    	boneNameList[l_r_detect(bone.name)].append(bone.name)
+                        boneNameList[l_r_detect(bone.name)].append(bone.name)
                     elif 'foot' in bone.name.lower() or 'ankle' in bone.name.lower():
-                    	boneNameList[l_r_detect(bone.name)].append(bone.name)
+                        boneNameList[l_r_detect(bone.name)].append(bone.name)
                     # ToesもToeもまとめるならこれでいいかなって
                     elif 'toe' in bone.name.lower():
-                    	boneNameList[l_r_detect(bone.name)].append(bone.name)
+                        boneNameList[l_r_detect(bone.name)].append(bone.name)
     return boneNameList
 
 # 素体のボーン名称に合わせて服側のボーン名称を変更するよ。力業だよ。
@@ -88,7 +88,7 @@ def change_name(parentList, targetNameA, targetNameB, targetNameC):
 def change_bone_name():
     parentBoneList = init_bone_list()
     # 素体ボーンが特殊枠かどうかを確認するよ。具体的にはForeが含まれているか調べるよ
-    flagArm = flagLeg = False
+    flagArm = flagLeg = flagFoot = False
     for i in range(len(parentBoneList[0])):
         if 'fore' in parentBoneList[0][i].lower():
             flagArm = True
@@ -97,8 +97,12 @@ def change_bone_name():
         elif 'lower' in parentBoneList[0][i].lower():
             flagLeg = True
             if flagArm is True:
-                break 
-    print(parentBoneList)
+                break
+        elif 'ankle' in parentBoneList[0][i].lower():
+            flagFoot = True
+            if flagArm is True:
+                break
+#    print(parentBoneList)
     # シーン中の全てのオブジェクト検索
     for ob in bpy.context.scene.objects:
         # オブジェクト内からArmatureを検索
@@ -166,7 +170,10 @@ def change_bone_name():
                     elif 'foot' in bone.name.lower():
                         nameA = 'foot'
                     elif 'ankle' in bone.name.lower():
-                        nameA = 'ankle'
+                        if flagFoot is True:
+                            nameA = 'ankle'
+                        else:
+                            nameA = 'foot'
                     #ToesもToeもまとめるならこれでいいかなって
                     elif 'toe' in bone.name.lower():
                         nameA = 'toe'
@@ -177,7 +184,9 @@ def change_bone_name():
                     if l_r_detect(bone.name) >= 0:
                         if change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC) != -1:
                             print('input is ' + bone.name + ', output is ' + change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC))
-    #                       bone.name = change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC)
+#                           bone.name = change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC)
+                        else:
+                            print('kanashimi')
 
 # 実行指定で呼び出されているかチェック
 change_bone_name()
