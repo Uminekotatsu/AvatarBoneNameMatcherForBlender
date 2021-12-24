@@ -94,11 +94,11 @@ def change_bone_name():
             flagArm = True
             if flagLeg is True:
                 break
-        elif 'lower' in parentBoneList[0][i]:
+        elif 'lower' in parentBoneList[0][i].lower():
             flagLeg = True
             if flagArm is True:
                 break 
-#    print(parentBoneList)
+    print(parentBoneList)
     # シーン中の全てのオブジェクト検索
     for ob in bpy.context.scene.objects:
         # オブジェクト内からArmatureを検索
