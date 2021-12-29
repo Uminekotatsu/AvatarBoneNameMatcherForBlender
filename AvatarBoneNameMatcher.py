@@ -183,8 +183,8 @@ def change_bone_name():
 #                    print('input is ' + bone.name + ', A is ' + nameA + ', B is ' + nameB + ', C is ' + nameC)
                     if l_r_detect(bone.name) >= 0:
                         if change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC) != -1:
-                            print('input is ' + bone.name + ', output is ' + change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC))
-#                           bone.name = change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC)
+#                            print('input is ' + bone.name + ', output is ' + change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC))
+                           bone.name = change_name(parentBoneList[l_r_detect(bone.name)], nameA, nameB, nameC)
                         else:
                             print('kanashimi')
 
