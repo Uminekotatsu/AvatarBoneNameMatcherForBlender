@@ -4,6 +4,11 @@ import bpy
 
 # Leftなら0、Rなら1を返すよ。えらい。
 def l_r_detect(name):
+    #lowerが判定の邪魔なので、一旦削除するよ！
+    if 'Lower' in name:
+        name = name.replace('Lower', '')
+    elif 'lower' in name:
+        name = name.replace('lower', '')
     if 'L' in name and 'R' not in name[-1] and 'right' not in name.lower() or 'left' in name.lower():
         return 0
     elif 'R' in name and 'L' not in name[-1] and 'left' not in name.lower() or 'right' in name.lower():
@@ -131,7 +136,9 @@ def change_bone_name():
                                 if 'twist' in bone.name.lower():
                                     nameC = 'twist'
                             elif 'fore' in bone.name.lower():
-                                nameB = 'fore'
+                                nameB = 'lower'
+                                if 'twist' in bone.name.lower():
+                                    nameC = 'twist'
                         else:
                             if 'up' in bone.name.lower():
                                 #nameB = 'up'
